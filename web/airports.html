@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SKYWEAVE Airports Directory - Search and filter airports around the world.">
+    <title>Airports Directory | SKYWEAVE</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">
+            <span>✈ SKYWEAVE</span>
+        </a>
+        <button class="nav-toggle" aria-label="Toggle Navigation">☰</button>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="search.html">Search</a></li>
+            <li><a href="airports.html">Airports</a></li>
+            <li><a href="flights.html">Flights</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Header Banner -->
+    <header style="background: linear-gradient(135deg, rgba(255,105,180,0.1), rgba(244,114,182,0.15)), url('https://images.unsplash.com/photo-1495562569060-2eec283d5391?auto=format&fit=crop&w=1920&q=80') no-repeat center center; background-size: cover; padding: 5rem 5% 7rem 5%; text-align: center;">
+        <h1 style="font-size: 2.8rem; font-weight: 800; color: var(--text-color); margin-bottom: 0.5rem;">Airports Network Directory</h1>
+        <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Browse through the nodes in our flight connectivity graph. Search by code, name, city, or country.</p>
+    </header>
+
+    <!-- Search and Filters Container -->
+    <div class="search-container">
+        <div class="search-form-grid" style="grid-template-columns: 2fr 1fr;">
+            <!-- Live Search -->
+            <div class="form-group">
+                <label for="airport-search-input">🔍 Search Airports</label>
+                <input type="text" id="airport-search-input" class="form-control" placeholder="Type city, code, or name...">
+            </div>
+
+            <!-- Country Filter -->
+            <div class="form-group">
+                <label for="airport-country-filter">🌍 Country Filter</label>
+                <select id="airport-country-filter" class="form-control">
+                    <option value="">All Countries</option>
+                    <!-- Dynamically filled -->
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Airports Cards Grid -->
+    <section class="section" style="padding-top: 0;">
+        <!-- Loading Spinner -->
+        <div class="spinner-container" id="airports-spinner" style="display: block;">
+            <div class="spinner"></div>
+            <p style="color: var(--text-muted);">Fetching airport directory...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="airports-empty-state" class="card" style="max-width: 500px; margin: 0 auto; text-align: center; display: none;">
+            <div class="card-icon" style="margin: 0 auto 1rem auto; background: var(--bg-color);">🗺</div>
+            <h3 class="card-title">No Airports Found</h3>
+            <p class="card-text">We couldn't find any airports matching your search criteria.</p>
+        </div>
+
+        <!-- Dynamic Grid -->
+        <div class="card-grid" id="airports-grid">
+            <!-- Rendered dynamically -->
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo">✈ SKYWEAVE</a>
+                <p>Smart Route Planning for Modern Air Travel. Discover the optimal flight paths using state-of-the-art computational networks.</p>
+            </div>
+            <div>
+                <h4 class="footer-title">Navigation</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="search.html">Search Routes</a></li>
+                    <li><a href="airports.html">Airports Directory</a></li>
+                    <li><a href="flights.html">Flight Schedules</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Company</h4>
+                <ul class="footer-links">
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact Support</a></li>
+                    <li><a href="admin-login.html">Admin Portal</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 SKYWEAVE. All Rights Reserved.</p>
+            <div class="footer-socials">
+                <a href="#">📘</a>
+                <a href="#">🐦</a>
+                <a href="#">📸</a>
+                <a href="#">💼</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script src="js/airports.js"></script>
+</body>
+</html>

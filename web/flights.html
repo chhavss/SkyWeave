@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SKYWEAVE Flights Schedule - Search and filter flight connections by airline, source, destination, cost, and duration.">
+    <title>Flight Schedules | SKYWEAVE</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">
+            <span>✈ SKYWEAVE</span>
+        </a>
+        <button class="nav-toggle" aria-label="Toggle Navigation">☰</button>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="search.html">Search</a></li>
+            <li><a href="airports.html">Airports</a></li>
+            <li><a href="flights.html">Flights</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Header Banner -->
+    <header style="background: linear-gradient(135deg, rgba(255,105,180,0.1), rgba(244,114,182,0.15)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1920&q=80') no-repeat center center; background-size: cover; padding: 5rem 5% 7rem 5%; text-align: center;">
+        <h1 style="font-size: 2.8rem; font-weight: 800; color: var(--text-color); margin-bottom: 0.5rem;">Scheduled Flight Network</h1>
+        <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Browse operational flight edges in our graph database. Sort and filter to check routes and schedules.</p>
+    </header>
+
+    <!-- Filter Container -->
+    <div class="search-container">
+        <div class="search-form-grid" style="grid-template-columns: repeat(4, 1fr);">
+            <!-- Source Filter -->
+            <div class="form-group">
+                <label for="flight-source-filter">🛫 Origin</label>
+                <select id="flight-source-filter" class="form-control">
+                    <option value="">All Origins</option>
+                    <!-- Dynamically filled -->
+                </select>
+            </div>
+
+            <!-- Destination Filter -->
+            <div class="form-group">
+                <label for="flight-dest-filter">🛬 Destination</label>
+                <select id="flight-dest-filter" class="form-control">
+                    <option value="">All Destinations</option>
+                    <!-- Dynamically filled -->
+                </select>
+            </div>
+
+            <!-- Airline Search -->
+            <div class="form-group">
+                <label for="flight-airline-search">✈ Airline</label>
+                <input type="text" id="flight-airline-search" class="form-control" placeholder="Search airline...">
+            </div>
+
+            <!-- Sort By -->
+            <div class="form-group">
+                <label for="flight-sort">↕ Sort By</label>
+                <select id="flight-sort" class="form-control">
+                    <option value="flight_number">Flight Number</option>
+                    <option value="cost_low">Price: Low to High</option>
+                    <option value="cost_high">Price: High to Low</option>
+                    <option value="duration">Duration</option>
+                    <option value="distance">Distance</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flights Grid / Table -->
+    <section class="section" style="padding-top: 0;">
+        <!-- Loading Spinner -->
+        <div class="spinner-container" id="flights-spinner" style="display: block;">
+            <div class="spinner"></div>
+            <p style="color: var(--text-muted);">Loading flights schedules...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="flights-empty-state" class="card" style="max-width: 500px; margin: 0 auto; text-align: center; display: none;">
+            <div class="card-icon" style="margin: 0 auto 1rem auto; background: var(--bg-color);">✈</div>
+            <h3 class="card-title">No Flights Scheduled</h3>
+            <p class="card-text">We couldn't find any flights matching your search options.</p>
+        </div>
+
+        <!-- Table View -->
+        <div class="table-responsive" id="flights-table-container" style="display: none;">
+            <table class="sky-table">
+                <thead>
+                    <tr>
+                        <th>Flight Number</th>
+                        <th>Airline</th>
+                        <th>Origin</th>
+                        <th>Destination</th>
+                        <th>Distance</th>
+                        <th>Duration</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="flights-tbody">
+                    <!-- Loaded dynamically -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo">✈ SKYWEAVE</a>
+                <p>Smart Route Planning for Modern Air Travel. Discover the optimal flight paths using state-of-the-art computational networks.</p>
+            </div>
+            <div>
+                <h4 class="footer-title">Navigation</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="search.html">Search Routes</a></li>
+                    <li><a href="airports.html">Airports Directory</a></li>
+                    <li><a href="flights.html">Flight Schedules</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Company</h4>
+                <ul class="footer-links">
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact Support</a></li>
+                    <li><a href="admin-login.html">Admin Portal</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 SKYWEAVE. All Rights Reserved.</p>
+            <div class="footer-socials">
+                <a href="#">📘</a>
+                <a href="#">🐦</a>
+                <a href="#">📸</a>
+                <a href="#">💼</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script src="js/flights.js"></script>
+</body>
+</html>

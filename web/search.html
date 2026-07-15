@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SKYWEAVE Flight Search - Find the shortest, cheapest, or fastest flight route between any two airports.">
+    <title>Search Routes | SKYWEAVE</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">
+            <span>✈ SKYWEAVE</span>
+        </a>
+        <button class="nav-toggle" aria-label="Toggle Navigation">☰</button>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="search.html">Search</a></li>
+            <li><a href="airports.html">Airports</a></li>
+            <li><a href="flights.html">Flights</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Page Header Banner -->
+    <header style="background: linear-gradient(135deg, rgba(255,105,180,0.1), rgba(244,114,182,0.15)), url('https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1920&q=80') no-repeat center center; background-size: cover; padding: 5rem 5% 7rem 5%; text-align: center;">
+        <h1 style="font-size: 2.8rem; font-weight: 800; color: var(--text-color); margin-bottom: 0.5rem;">Explore Routing Networks</h1>
+        <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto;">Discover the absolute shortest, cheapest, or fastest paths across our network using state-of-the-art graph structures.</p>
+    </header>
+
+    <!-- Search Form Container -->
+    <div class="search-container">
+        <form id="route-search-form" onsubmit="event.preventDefault();">
+            <div class="search-form-grid">
+                <!-- Source Airport -->
+                <div class="form-group">
+                    <label for="search-source">🛫 Source Airport</label>
+                    <input type="text" id="search-source" class="form-control" placeholder="City or Code (e.g. DEL)" autocomplete="off" required>
+                    <ul class="suggestions-list" id="source-suggestions" style="display: none;"></ul>
+                </div>
+
+                <!-- Destination Airport -->
+                <div class="form-group">
+                    <label for="search-dest">🛬 Destination Airport</label>
+                    <input type="text" id="search-dest" class="form-control" placeholder="City or Code (e.g. JFK)" autocomplete="off">
+                    <ul class="suggestions-list" id="dest-suggestions" style="display: none;"></ul>
+                </div>
+            </div>
+
+            <!-- Optimization constraints -->
+            <div id="optimization-container">
+                <p style="text-align: center; font-weight: 600; font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0.5rem;">Optimize route for:</p>
+                <div class="optimization-options">
+                    <button type="button" class="opt-btn active" data-opt="distance">📏 Shortest Distance</button>
+                    <button type="button" class="opt-btn" data-opt="duration">⏱ Fastest Duration</button>
+                    <button type="button" class="opt-btn" data-opt="cost">💵 Lowest Cost</button>
+                </div>
+            </div>
+
+            <div class="search-submit-container">
+                <button type="button" id="btn-search-route" class="btn btn-primary">Find Route ➔</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Main Results Section -->
+    <section class="section" style="padding-top: 0;">
+        <!-- Loading Animation -->
+        <div class="spinner-container" id="loading-spinner">
+            <div class="spinner"></div>
+            <p style="color: var(--text-muted); font-weight: 500;">Computing optimal paths using Graph engine...</p>
+        </div>
+
+        <!-- Error/Empty State -->
+        <div id="result-error" class="card" style="max-width: 600px; margin: 0 auto 2rem auto; text-align: center; display: none; border-color: var(--error);">
+            <div class="card-icon" style="color: var(--error); margin: 0 auto 1rem auto; background: rgba(239, 68, 68, 0.1);">✗</div>
+            <h3 class="card-title">No Route Found</h3>
+            <p class="card-text" id="result-error-msg">There are no operational flights connecting the selected airports.</p>
+        </div>
+
+        <!-- Successful Dijkstra Path Container -->
+        <div class="result-section" id="dijkstra-result" style="display: none;">
+            <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 1.5rem; text-align: center;">Optimal Flight Path Found</h2>
+            
+            <!-- Summary Stats -->
+            <div class="result-summary-card">
+                <div class="result-summary-grid">
+                    <div class="summary-item">
+                        <div class="summary-val" id="sum-stops">0</div>
+                        <div class="summary-lbl">Stops</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-val" id="sum-dist">0 km</div>
+                        <div class="summary-lbl">Distance</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-val" id="sum-duration">0h</div>
+                        <div class="summary-lbl">Duration</div>
+                    </div>
+                    <div class="summary-item">
+                        <div class="summary-val" id="sum-cost">₹0</div>
+                        <div class="summary-lbl">Total Cost</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Path Timeline -->
+            <div class="path-timeline" id="route-path-timeline">
+                <!-- Dynamic Nodes & Edges Rendered via JS -->
+            </div>
+        </div>
+
+        <!-- Successful BFS/DFS Traversal Container -->
+        <div class="result-section" id="traversal-result" style="display: none;">
+            <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 1.5rem; text-align: center;">Graph Traversal Route</h2>
+            
+            <div class="card" style="margin-bottom: 2rem;">
+                <h3 class="card-title">Airport Node Visit Order</h3>
+                <div id="traversal-visit-badges" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+                    <!-- Dynamic Badges -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo">✈ SKYWEAVE</a>
+                <p>Smart Route Planning for Modern Air Travel. Discover the optimal flight paths using state-of-the-art computational networks.</p>
+            </div>
+            <div>
+                <h4 class="footer-title">Navigation</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="search.html">Search Routes</a></li>
+                    <li><a href="airports.html">Airports Directory</a></li>
+                    <li><a href="flights.html">Flight Schedules</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Company</h4>
+                <ul class="footer-links">
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact Support</a></li>
+                    <li><a href="admin-login.html">Admin Portal</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 SKYWEAVE. All Rights Reserved.</p>
+            <div class="footer-socials">
+                <a href="#">📘</a>
+                <a href="#">🐦</a>
+                <a href="#">📸</a>
+                <a href="#">💼</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script src="js/search.js"></script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SKYWEAVE Admin Console Login - Manage airports and flight schedules.">
+    <title>Admin Login | SKYWEAVE</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <a href="index.html" class="nav-brand">
+            <span>✈ SKYWEAVE</span>
+        </a>
+        <button class="nav-toggle" aria-label="Toggle Navigation">☰</button>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="search.html">Search</a></li>
+            <li><a href="airports.html">Airports</a></li>
+            <li><a href="flights.html">Flights</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Login Container -->
+    <section class="section" style="min-height: 80vh; display: flex; align-items: center; justify-content: center; background: radial-gradient(circle at center, #FFF0F6, var(--bg-color));">
+        <div class="card" style="max-width: 450px; width: 100%; padding: 3rem;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <span style="font-size: 2.5rem;">🔑</span>
+                <h2 class="card-title" style="font-size: 1.8rem; margin-top: 0.5rem;">Admin Portal</h2>
+                <p class="card-text" style="font-size: 0.9rem;">Sign in to manage flights and airports.</p>
+            </div>
+
+            <form id="admin-login-form" onsubmit="event.preventDefault(); handleAdminLogin();">
+                <div class="form-group" style="margin-bottom: 1.2rem;">
+                    <label for="login-username">Username</label>
+                    <input type="text" id="login-username" class="form-control" placeholder="Enter username" required>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.8rem;">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" class="form-control" placeholder="Enter password" required>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.9rem 2rem;">Sign In ➔</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="footer-logo">✈ SKYWEAVE</a>
+                <p>Smart Route Planning for Modern Air Travel. Discover the optimal flight paths using state-of-the-art computational networks.</p>
+            </div>
+            <div>
+                <h4 class="footer-title">Navigation</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="search.html">Search Routes</a></li>
+                    <li><a href="airports.html">Airports Directory</a></li>
+                    <li><a href="flights.html">Flight Schedules</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">Company</h4>
+                <ul class="footer-links">
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="contact.html">Contact Support</a></li>
+                    <li><a href="admin-login.html">Admin Portal</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 SKYWEAVE. All Rights Reserved.</p>
+            <div class="footer-socials">
+                <a href="#">📘</a>
+                <a href="#">🐦</a>
+                <a href="#">📸</a>
+                <a href="#">💼</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Inline function for easy login handling
+        async function handleAdminLogin() {
+            const user = document.getElementById('login-username').value;
+            const pass = document.getElementById('login-password').value;
+
+            try {
+                const res = await fetch('/api/auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    localStorage.setItem('skyweave_admin_token', data.token);
+                    showToast(data.message, 'success');
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 800);
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Authentication connection error.', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
