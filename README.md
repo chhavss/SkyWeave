@@ -44,36 +44,6 @@ Designed with a premium pastel-inspired interface, the platform focuses on simpl
 
 ---
 
-# 🖥 Preview
-
-> Add your screenshots here.
-
-## Home
-
-```
-assets/screenshots/home.png
-```
-
-## Search
-
-```
-assets/screenshots/search.png
-```
-
-## About
-
-```
-assets/screenshots/about.png
-```
-
-## Dashboard
-
-```
-assets/screenshots/dashboard.png
-```
-
----
-
 # 📂 Project Structure
 
 ```
