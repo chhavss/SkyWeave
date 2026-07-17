@@ -71,7 +71,6 @@ The application combines a **Java-based graph algorithm engine**, **Node.js back
 
 ---
 
-# 📸 Project Screenshots
 
 # 📸 Project Screenshots
 
