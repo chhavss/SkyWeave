@@ -2,7 +2,11 @@
 
 // Run theme detection immediately to avoid Light Mode flash during loading
 (function() {
-    const savedTheme = localStorage.getItem('skyweave_theme') || 'light';
+    let savedTheme = localStorage.getItem('skyweave_theme');
+    if (!savedTheme) {
+        // Follow OS preference if no saved preference
+        savedTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
     document.documentElement.setAttribute('data-theme', savedTheme);
 })();
 
@@ -11,44 +15,100 @@ document.addEventListener('DOMContentLoaded', () => {
     initThemeToggle();
 });
 
-// Theme toggle button injection and logic
+// ─── Premium Sky/Space Theme Toggle ───────────────────────────────────────────
 function initThemeToggle() {
     const navbar = document.querySelector('.navbar');
     if (!navbar) return;
 
-    // Create theme toggle button
-    const btn = document.createElement('button');
-    btn.id = 'theme-toggle';
-    btn.className = 'btn-theme-toggle';
-    btn.setAttribute('aria-label', 'Toggle Theme');
-    
-    // Set initial icon based on theme state
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    btn.innerText = currentTheme === 'dark' ? '☀️' : '🌙';
+    const isDark = currentTheme === 'dark';
 
-    btn.addEventListener('click', () => {
-        const theme = document.documentElement.getAttribute('data-theme') || 'light';
-        const newTheme = theme === 'dark' ? 'light' : 'dark';
-        
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('skyweave_theme', newTheme);
-        btn.innerText = newTheme === 'dark' ? '☀️' : '🌙';
-        
-        showToast(`Switched to ${newTheme} mode`, 'success');
+    // ── Build toggle HTML ──
+    const wrapper = document.createElement('div');
+    wrapper.className = 'sky-toggle-wrapper';
+    wrapper.setAttribute('role', 'switch');
+    wrapper.setAttribute('aria-checked', isDark ? 'true' : 'false');
+    wrapper.setAttribute('aria-label', 'Toggle dark/light mode');
+    wrapper.setAttribute('tabindex', '0');
+    if (isDark) wrapper.classList.add('dark');
+
+    wrapper.innerHTML = `
+        <div class="sky-toggle-track">
+            <!-- Light mode: clouds -->
+            <div class="toggle-cloud toggle-cloud-1"></div>
+            <div class="toggle-cloud toggle-cloud-2"></div>
+            <div class="toggle-cloud toggle-cloud-3"></div>
+            <!-- Dark mode: stars -->
+            <div class="toggle-stars">
+                <span class="t-star t-star-1"></span>
+                <span class="t-star t-star-2"></span>
+                <span class="t-star t-star-3"></span>
+                <span class="t-star t-star-4"></span>
+                <span class="t-star t-star-5"></span>
+                <span class="t-star t-star-6"></span>
+                <span class="t-star t-star-7"></span>
+                <span class="t-star t-star-8"></span>
+            </div>
+            <!-- Knob: sun or moon -->
+            <div class="sky-toggle-knob">
+                <!-- Sun face -->
+                <div class="knob-sun">
+                    <div class="sun-ray sun-ray-1"></div>
+                    <div class="sun-ray sun-ray-2"></div>
+                    <div class="sun-ray sun-ray-3"></div>
+                    <div class="sun-ray sun-ray-4"></div>
+                    <div class="sun-ray sun-ray-5"></div>
+                    <div class="sun-ray sun-ray-6"></div>
+                    <div class="sun-ray sun-ray-7"></div>
+                    <div class="sun-ray sun-ray-8"></div>
+                    <div class="sun-core"></div>
+                </div>
+                <!-- Moon face -->
+                <div class="knob-moon">
+                    <div class="moon-core"></div>
+                    <div class="moon-crater moon-crater-1"></div>
+                    <div class="moon-crater moon-crater-2"></div>
+                    <div class="moon-crater moon-crater-3"></div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // ── Click / keyboard handler ──
+    function doToggle() {
+        const nowDark = wrapper.classList.contains('dark');
+        const newTheme = nowDark ? 'light' : 'dark';
+
+        // Animate page body
+        document.body.classList.add('theme-transitioning');
+
+        wrapper.classList.toggle('dark');
+        wrapper.setAttribute('aria-checked', nowDark ? 'false' : 'true');
+
+        // Small delay before committing theme for a sunset tint effect
+        setTimeout(() => {
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('skyweave_theme', newTheme);
+        }, 120);
+
+        setTimeout(() => {
+            document.body.classList.remove('theme-transitioning');
+        }, 600);
+    }
+
+    wrapper.addEventListener('click', doToggle);
+    wrapper.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); doToggle(); }
     });
 
-    // Insert button in the navbar right before the mobile toggle button (if present)
+    // ── Insert into navbar ──
     const navToggle = navbar.querySelector('.nav-toggle');
     if (navToggle) {
-        navbar.insertBefore(btn, navToggle);
+        navbar.insertBefore(wrapper, navToggle);
     } else {
-        // Fallback: insert right before the nav-links menu
         const navLinks = navbar.querySelector('.nav-links');
-        if (navLinks) {
-            navbar.insertBefore(btn, navLinks);
-        } else {
-            navbar.appendChild(btn);
-        }
+        if (navLinks) navbar.insertBefore(wrapper, navLinks);
+        else navbar.appendChild(wrapper);
     }
 }
 
